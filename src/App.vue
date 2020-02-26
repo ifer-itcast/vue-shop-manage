@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    hello vue
+    <!-- 路由占位符 -->
+    <router-view></router-view>
   </div>
 </template>
 
