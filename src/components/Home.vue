@@ -21,6 +21,7 @@
           unique-opened
           :collapse="isCollapse"
           :collapse-transition="false"
+          router
         >
           <!-- 一级菜单 -->
           <el-submenu :index="item.id+''" v-for="item in menulist" :key="item.id">
@@ -32,7 +33,7 @@
               <span>{{item.authName}}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
+            <el-menu-item :index="'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id">
               <template slot="title">
                 <!-- 图标 -->
                 <i class="el-icon-menu"></i>
