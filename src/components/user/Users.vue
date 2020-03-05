@@ -35,7 +35,7 @@
         <el-table-column label="操作">
           <template width="180px">
             <!-- 修改 -->
-            <el-button type="primary" size="mini" icon="el-icon-edit"></el-button>
+            <el-button type="primary" size="mini" icon="el-icon-edit" @click="showEditDialog()"></el-button>
             <!-- 删除 -->
             <el-button type="danger" size="mini" icon="el-icon-delete"></el-button>
             <!-- 分配角色 -->
@@ -57,7 +57,7 @@
       ></el-pagination>
     </el-card>
     <!-- 添加用户对话框 -->
-    <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="30%" @close="addDialogClosed">
+    <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="50%" @close="addDialogClosed">
       <!-- 内容主体 -->
       <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
         <el-form-item label="用户名" prop="username">
@@ -77,6 +77,14 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addUser">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 修改用户的对话框 -->
+    <el-dialog title="修改用户" :visible.sync="editDialogVisible" width="50%">
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editDialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -151,7 +159,9 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      // 控制修改用户对话框的显示与隐藏
+      editDialogVisible: false
     }
   },
   created() {
@@ -207,6 +217,10 @@ export default {
         // 刷新用户列表
         this.getUserList()
       })
+    },
+    // 修改用户
+    showEditDialog() {
+      this.editDialogVisible = true
     }
   }
 }
