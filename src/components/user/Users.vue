@@ -42,7 +42,12 @@
               @click="showEditDialog(scope.row.id)"
             ></el-button>
             <!-- 删除 -->
-            <el-button type="danger" size="mini" icon="el-icon-delete"></el-button>
+            <el-button
+              type="danger"
+              size="mini"
+              icon="el-icon-delete"
+              @click="removeUserById(scope.row.id)"
+            ></el-button>
             <!-- 分配角色 -->
             <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
               <el-button type="warning" size="mini" icon="el-icon-setting"></el-button>
@@ -286,6 +291,20 @@ export default {
         // 提示修改成功
         this.$message.success('更新用户信息成功')
       })
+    },
+    // 根据 ID 删除对应的用户
+    async removeUserById(id) {
+      // 询问框
+      const confirmResult = await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      // 如果用户确认删除，则返回字符串 confirm，取消返回 cancel
+      if (confirmResult !== 'confirm') {
+        return this.$message.info('已取消删除')
+      }
+      // 确认了删除
     }
   }
 }
