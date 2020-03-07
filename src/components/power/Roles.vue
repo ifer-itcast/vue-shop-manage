@@ -42,7 +42,12 @@
                   </el-col>
                   <el-col :span="18">
                     <!-- 渲染三级权限 -->
-                    <el-tag v-for="(item3) in item2.children" :key="item3.id">{{item3.authName}}</el-tag>
+                    <el-tag
+                      closable
+                      @close="removeRightById()"
+                      v-for="(item3) in item2.children"
+                      :key="item3.id"
+                    >{{item3.authName}}</el-tag>
                   </el-col>
                 </el-row>
               </el-col>
@@ -84,6 +89,20 @@ export default {
         return this.$message.error('获取角色列表失败')
       }
       this.rolelist = res.data
+    },
+    // 根据 ID 删除对应的权限
+    async removeRightById() {
+      // 弹框提示是否删除
+      const confirmResult = await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+
+      if (confirmResult !== 'confirm') {
+        return this.$message.info('取消了删除')
+      }
+      // 确认了删除
     }
   }
 }
