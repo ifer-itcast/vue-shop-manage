@@ -26,7 +26,7 @@
             >
               <!-- 渲染一级权限 -->
               <el-col :span="5">
-                <el-tag>{{item1.authName}}</el-tag>
+                <el-tag closable @close="removeRightById(scope.row, item1.id)">{{item1.authName}}</el-tag>
                 <i class="el-icon-caret-right"></i>
               </el-col>
               <el-col :span="19">
@@ -37,14 +37,18 @@
                   :key="item2.id"
                 >
                   <el-col :span="6">
-                    <el-tag type="success">{{item2.authName}}</el-tag>
+                    <el-tag
+                      closable
+                      type="success"
+                      @close="removeRightById(scope.row, item2.id)"
+                    >{{item2.authName}}</el-tag>
                     <i class="el-icon-caret-right"></i>
                   </el-col>
                   <el-col :span="18">
                     <!-- 渲染三级权限 -->
                     <el-tag
                       closable
-                      @close="removeRightById()"
+                      @close="removeRightById(scope.row, item3.id)"
                       v-for="(item3) in item2.children"
                       :key="item3.id"
                     >{{item3.authName}}</el-tag>
@@ -91,18 +95,32 @@ export default {
       this.rolelist = res.data
     },
     // 根据 ID 删除对应的权限
-    async removeRightById() {
+    async removeRightById(role, rightId) {
       // 弹框提示是否删除
-      const confirmResult = await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).catch(err => err)
+      const confirmResult = await this.$confirm(
+        '此操作将永久删除该文件, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).catch(err => err)
 
       if (confirmResult !== 'confirm') {
         return this.$message.info('取消了删除')
       }
       // 确认了删除
+      // 角色ID、权限ID
+      const { data: res } = await this.$http.delete(
+        `roles/${role.id}/rights/${rightId}`
+      )
+      if (res.meta.status !== 200) {
+        return this.$message.error('删除权限失败')
+      }
+      // 这样会发生完整渲染，导致收起
+      // this.getRolesList()
+      role.children = res.data
     }
   }
 }
