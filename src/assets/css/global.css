@@ -23,3 +23,8 @@ body,
 .el-pagination {
     margin-top: 15px;
 }
+
+/* 解决 cascader Bug */
+.el-cascader-panel {
+    height: 200px;
+}
