@@ -57,7 +57,12 @@
       ></el-pagination>
     </el-card>
     <!-- 添加分类的对话框 -->
-    <el-dialog title="添加分类" :visible.sync="addCateDialogVisible" width="50%" @close="addCateDialogClosed">
+    <el-dialog
+      title="添加分类"
+      :visible.sync="addCateDialogVisible"
+      width="50%"
+      @close="addCateDialogClosed"
+    >
       <!-- 添加分类表单 -->
       <el-form
         :model="addCateForm"
@@ -219,7 +224,20 @@ export default {
     },
     // 点击按钮添加新的分类
     addCate() {
-      console.log(this.addCateForm)
+      // console.log(this.addCateForm)
+      this.$refs.addCateFormRef.validate(async valid => {
+        if (!valid) return false
+        const { data: res } = await this.$http.post(
+          'categories',
+          this.addCateForm
+        )
+        if (res.meta.status !== 201) {
+          return this.$message.error('添加分类失败')
+        }
+        this.$message.success('添加分类成功')
+        this.getCateList()
+        this.addCateDialogVisible = false
+      })
       // this.addCateDialogVisible = false
     },
     // 监听对话框的关闭事件，重置表单数据
