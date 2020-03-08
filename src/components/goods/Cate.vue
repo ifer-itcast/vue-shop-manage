@@ -57,7 +57,7 @@
       ></el-pagination>
     </el-card>
     <!-- 添加分类的对话框 -->
-    <el-dialog title="添加分类" :visible.sync="addCateDialogVisible" width="50%">
+    <el-dialog title="添加分类" :visible.sync="addCateDialogVisible" width="50%" @close="addCateDialogClosed">
       <!-- 添加分类表单 -->
       <el-form
         :model="addCateForm"
@@ -85,7 +85,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addCateDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addCateDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="addCate">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -201,11 +201,35 @@ export default {
       }
       // 存一下
       this.parentCateList = res.data
-      console.log(this.parentCateList, 1)
     },
     // 选择项发生变化会触发的函数
     parentCateChanged() {
-      console.log(this.selectedKeys, 233)
+      // 如果 selectedKeys 数组的 length 大于 0，证明选中了父级分类
+      if (this.selectedKeys.length > 0) {
+        // 父级分类的 ID
+        this.addCateForm.cat_pid = this.selectedKeys[
+          this.selectedKeys.length - 1
+        ]
+        // 为当前分类的等级赋值
+        this.addCateForm.cat_level = this.selectedKeys.length
+      } else {
+        this.addCateForm.cat_pid = 0
+        this.addCateForm.cat_level = 0
+      }
+    },
+    // 点击按钮添加新的分类
+    addCate() {
+      console.log(this.addCateForm)
+      // this.addCateDialogVisible = false
+    },
+    // 监听对话框的关闭事件，重置表单数据
+    addCateDialogClosed() {
+      this.$refs.addCateFormRef.resetFields()
+      // 选择到的父分类 ID
+      this.selectedKeys = []
+      // 准备提交到后台的分类等级和分类 ID
+      this.addCateForm.cat_level = 0
+      this.addCateForm.cat_pid = 0
     }
   }
 }
@@ -215,7 +239,7 @@ export default {
 .treeTable {
   margin-top: 15px;
 }
-.el-cascader{
+.el-cascader {
   width: 100%;
 }
 </style>
