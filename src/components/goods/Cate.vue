@@ -14,6 +14,7 @@
         </el-col>
       </el-row>
       <!-- 表格区域 -->
+      <tree-table :data="catelist" :columns="columns" :selection-type="false" show-index index-text="#" border :show-row-hover="false"></tree-table>
       <!-- 分页区域 -->
     </el-card>
   </div>
@@ -32,7 +33,12 @@ export default {
       // 商品分类的数据列表，默认为空
       catelist: [],
       // 总数据条数
-      total: 0
+      total: 0,
+      // 为 table 指定列的定义
+      columns: [{
+        label: '分类名称',
+        prop: 'cat_name'
+      }]
     }
   },
   created() {
