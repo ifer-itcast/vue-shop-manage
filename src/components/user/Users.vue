@@ -373,7 +373,7 @@ export default {
         rid: this.selectedRoleId
       })
       if (res.meta.status !== 200) {
-        this.$message.error('更新用户角色失败')
+        return this.$message.error('更新用户角色失败')
       }
       this.$message.success('更新用户角色成功')
       // 更新用户信息列表
