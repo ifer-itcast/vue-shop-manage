@@ -14,10 +14,23 @@
         </el-col>
       </el-row>
       <!-- 表格区域 -->
-      <tree-table :data="catelist" :columns="columns" :selection-type="false" show-index index-text="#" border :show-row-hover="false">
+      <tree-table
+        :data="catelist"
+        :columns="columns"
+        :selection-type="false"
+        show-index
+        index-text="#"
+        border
+        :show-row-hover="false"
+        class="treeTable"
+      >
         <!-- 是否有效 -->
         <template slot="isok" slot-scope="scope">
-          <i class="el-icon-success" v-if="scope.row.cat_deleted === false" style="color: lightgreen;"></i>
+          <i
+            class="el-icon-success"
+            v-if="scope.row.cat_deleted === false"
+            style="color: lightgreen;"
+          ></i>
           <i class="el-icon-error" v-else style="color: red;"></i>
         </template>
         <!-- 排序 -->
@@ -33,6 +46,15 @@
         </template>
       </tree-table>
       <!-- 分页区域 -->
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="queryInfo.pagenum"
+        :page-sizes="[3, 5, 10, 15]"
+        :page-size="queryInfo.pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      ></el-pagination>
     </el-card>
   </div>
 </template>
@@ -52,24 +74,29 @@ export default {
       // 总数据条数
       total: 0,
       // 为 table 指定列的定义
-      columns: [{
-        label: '分类名称',
-        prop: 'cat_name'
-      }, {
-        label: '是否有效',
-        // 将当前列定义为模板列
-        type: 'template',
-        // 当前列使用的模板名称
-        template: 'isok'
-      }, {
-        label: '排序',
-        type: 'template',
-        template: 'order'
-      }, {
-        label: '操作',
-        type: 'template',
-        template: 'opt'
-      }]
+      columns: [
+        {
+          label: '分类名称',
+          prop: 'cat_name'
+        },
+        {
+          label: '是否有效',
+          // 将当前列定义为模板列
+          type: 'template',
+          // 当前列使用的模板名称
+          template: 'isok'
+        },
+        {
+          label: '排序',
+          type: 'template',
+          template: 'order'
+        },
+        {
+          label: '操作',
+          type: 'template',
+          template: 'opt'
+        }
+      ]
     }
   },
   created() {
@@ -88,10 +115,23 @@ export default {
       this.catelist = res.data.result
       // 为总数据条数赋值
       this.total = res.data.total
+    },
+    // 监听 pagesize 变化
+    handleSizeChange(newSize) {
+      this.queryInfo.pagesize = newSize
+      this.getCateList()
+    },
+    // 监听 pagenum 变化
+    handleCurrentChange(newPage) {
+      this.queryInfo.pagenum = newPage
+      this.getCateList()
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.treeTable{
+  margin-top: 15px;
+}
 </style>
