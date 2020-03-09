@@ -42,8 +42,8 @@
             <el-table-column type="index"></el-table-column>
             <el-table-column label="参数名称" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
-              <template>
-                <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog">编辑</el-button>
+              <template slot-scope="scope">
+                <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.attr_id)">编辑</el-button>
                 <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
               </template>
             </el-table-column>
@@ -65,8 +65,8 @@
             <el-table-column type="index"></el-table-column>
             <el-table-column label="属性名称" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
-              <template>
-                <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog">编辑</el-button>
+              <template slot-scope="scope">
+                <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.attr_id)">编辑</el-button>
                 <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
               </template>
             </el-table-column>
@@ -221,7 +221,17 @@ export default {
       })
     },
     // 点击按钮，展示修改参数的对话框
-    showEditDialog() {
+    async showEditDialog(attrId) {
+      // 查询当前参数的信息
+      const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes/${attrId}`, {
+        params: {
+          attr_sel: this.activeName
+        }
+      })
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取参数信息失败')
+      }
+      this.editForm = res.data
       this.editDialogVisible = true
     },
     // 重置修改参数的表单
@@ -230,7 +240,19 @@ export default {
     },
     // 点击按钮，修改参数信息
     editParams() {
-
+      this.$refs.editFormRef.validate(async valid => {
+        if (!valid) return false
+        const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${this.editForm.attr_id}`, {
+          attr_name: this.editForm.attr_name,
+          attr_sel: this.activeName
+        })
+        if (res.meta.status !== 200) {
+          return this.$message.error('修改参数失败')
+        }
+        this.$message.success('修改参数成功')
+        this.getParamsData()
+        this.editDialogVisible = false
+      })
     }
   },
   computed: {
