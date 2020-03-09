@@ -69,27 +69,33 @@ export default {
       this.catelist = res.data
     },
     // 级联选择框选中项变化会触发
-    async handleChange() {
+    handleChange() {
+      this.getParamsData()
+    },
+    // Tab 页签点击时触发
+    handleTabClick() {
+      this.getParamsData()
+    },
+    // 获取参数的列表数据
+    async getParamsData() {
       if (this.selectedCateKeys.length !== 3) {
         // 证明选中的不是 3 级分类
         this.selectedCateKeys = []
         return false
       }
-      // 选中的是 3 级分类
-      // 根据所选分类的 ID，和当前所处的面板，获取对应的参数
-      const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, {
-        params: {
-          sel: this.activeName
+      // 确定了选中的是 3 级分类。根据所选分类的 ID，和当前所处的面板，获取对应的参数
+      const { data: res } = await this.$http.get(
+        `categories/${this.cateId}/attributes`,
+        {
+          params: {
+            sel: this.activeName
+          }
         }
-      })
+      )
       if (res.meta.status !== 200) {
         return this.$message.error('获取参数列表失败')
       }
       console.log(res.data)
-    },
-    // Tab 页签点击时触发
-    handleTabClick() {
-      console.log(this.activeName)
     }
   },
   computed: {
