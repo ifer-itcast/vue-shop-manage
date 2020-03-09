@@ -26,8 +26,14 @@
       </el-row>
       <!-- tab 标签 -->
       <el-tabs v-model="activeName" @tab-click="handleTabClick">
-        <el-tab-pane label="动态参数" name="first">动态参数</el-tab-pane>
-        <el-tab-pane label="静态属性" name="second">静态属性</el-tab-pane>
+        <!-- 添加动态参数面板 -->
+        <el-tab-pane label="动态参数" name="first">
+          <el-button type="primary" size="mini" :disabled="isBtnDisabled">添加参数</el-button>
+        </el-tab-pane>
+        <!-- 添加静态属性面板 -->
+        <el-tab-pane label="静态属性" name="second">
+          <el-button type="primary" size="mini" :disabled="isBtnDisabled">添加属性</el-button>
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
@@ -75,6 +81,16 @@ export default {
     // Tab 页签点击时触发
     handleTabClick() {
       console.log(this.activeName)
+    }
+  },
+  computed: {
+    // 如果按钮需要被禁用，则返回 true，否则返回 false
+    isBtnDisabled() {
+      if (this.selectedCateKeys.length !== 3) {
+        return true
+      } else {
+        return false
+      }
     }
   }
 }
