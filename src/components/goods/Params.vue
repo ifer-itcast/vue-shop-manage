@@ -29,10 +29,38 @@
         <!-- 添加动态参数面板 -->
         <el-tab-pane label="动态参数" name="many">
           <el-button type="primary" size="mini" :disabled="isBtnDisabled">添加参数</el-button>
+          <!-- 动态参数表格 -->
+          <el-table :data="manyTableData" border stripe>
+            <!-- 展开行的操作 -->
+            <el-table-column type="expand"></el-table-column>
+            <!-- 索引列 -->
+            <el-table-column type="index"></el-table-column>
+            <el-table-column label="参数名称" prop="attr_name"></el-table-column>
+            <el-table-column label="操作">
+              <template>
+                <el-button size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
+                <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </el-tab-pane>
         <!-- 添加静态属性面板 -->
         <el-tab-pane label="静态属性" name="only">
           <el-button type="primary" size="mini" :disabled="isBtnDisabled">添加属性</el-button>
+          <!-- 静态属性表格 -->
+          <el-table :data="onlyTableData" border stripe>
+            <!-- 展开行的操作 -->
+            <el-table-column type="expand"></el-table-column>
+            <!-- 索引列 -->
+            <el-table-column type="index"></el-table-column>
+            <el-table-column label="属性名称" prop="attr_name"></el-table-column>
+            <el-table-column label="操作">
+              <template>
+                <el-button size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
+                <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -53,7 +81,11 @@ export default {
       // 级联选择框双向绑定到的数组
       selectedCateKeys: [],
       // 被激活的页签的名称
-      activeName: 'many'
+      activeName: 'many',
+      // 动态参数的数据
+      manyTableData: [],
+      // 静态属性的数据
+      onlyTableData: []
     }
   },
   created() {
@@ -95,7 +127,11 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error('获取参数列表失败')
       }
-      console.log(res.data)
+      if (this.activeName === 'many') {
+        this.manyTableData = res.data
+      } else {
+        this.onlyTableData = res.data
+      }
     }
   },
   computed: {
