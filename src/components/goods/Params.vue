@@ -37,7 +37,11 @@
           <!-- 动态参数表格 -->
           <el-table :data="manyTableData" border stripe>
             <!-- 展开行的操作 -->
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-tag v-for="(item, i) in scope.row.attr_vals" :key="i" closable>{{item}}</el-tag>
+              </template>
+            </el-table-column>
             <!-- 索引列 -->
             <el-table-column type="index"></el-table-column>
             <el-table-column label="参数名称" prop="attr_name"></el-table-column>
@@ -208,6 +212,10 @@ export default {
           }
         }
       )
+      // 对参数下的可选项数据进行加工
+      res.data.forEach(item => {
+        item.attr_vals = item.attr_vals.split(' ')
+      })
       if (res.meta.status !== 200) {
         return this.$message.error('获取参数列表失败')
       }
@@ -335,5 +343,8 @@ export default {
 <style lang="less" scoped>
 .cat_opt {
   margin: 15px 0;
+}
+el-tag{
+  margin: 0 10px;
 }
 </style>
