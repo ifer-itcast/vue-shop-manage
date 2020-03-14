@@ -40,7 +40,12 @@
             <el-table-column type="expand">
               <template slot-scope="scope">
                 <!-- 循环渲染 Tag 标签 -->
-                <el-tag v-for="(item, i) in scope.row.attr_vals" :key="i" closable @close="handleClose(i, scope.row)">{{item}}</el-tag>
+                <el-tag
+                  v-for="(item, i) in scope.row.attr_vals"
+                  :key="i"
+                  closable
+                  @close="handleClose(i, scope.row)"
+                >{{item}}</el-tag>
                 <!-- 输入的文本框 -->
                 <el-input
                   class="input-new-tag"
@@ -92,7 +97,34 @@
           <!-- 静态属性表格 -->
           <el-table :data="onlyTableData" border stripe>
             <!-- 展开行的操作 -->
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <!-- 循环渲染 Tag 标签 -->
+                <el-tag
+                  v-for="(item, i) in scope.row.attr_vals"
+                  :key="i"
+                  closable
+                  @close="handleClose(i, scope.row)"
+                >{{item}}</el-tag>
+                <!-- 输入的文本框 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                ></el-input>
+                <!-- 添加的按钮 -->
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope.row)"
+                >+ New Tag</el-button>
+              </template>
+            </el-table-column>
             <!-- 索引列 -->
             <el-table-column type="index"></el-table-column>
             <el-table-column label="属性名称" prop="attr_name"></el-table-column>
@@ -223,6 +255,9 @@ export default {
       if (this.selectedCateKeys.length !== 3) {
         // 证明选中的不是 3 级分类
         this.selectedCateKeys = []
+        // 假如先选择 3 级分类，再次选择 2 级分类时要清除表格数据
+        this.manyTableData = []
+        this.onlyTableData = []
         return false
       }
       // 确定了选中的是 3 级分类。根据所选分类的 ID，和当前所处的面板，获取对应的参数
@@ -363,11 +398,14 @@ export default {
     },
     // 将对 attr_vals 的操作，保存到数据库
     async saveAttrVals(row) {
-      const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${row.attr_id}`, {
-        attr_name: row.attr_name,
-        attr_sel: row.attr_sel,
-        attr_vals: row.attr_vals.join(' ')
-      })
+      const { data: res } = await this.$http.put(
+        `categories/${this.cateId}/attributes/${row.attr_id}`,
+        {
+          attr_name: row.attr_name,
+          attr_sel: row.attr_sel,
+          attr_vals: row.attr_vals.join(' ')
+        }
+      )
       if (res.meta.status !== 200) {
         return this.$message.error('添加参数项失败')
       }
