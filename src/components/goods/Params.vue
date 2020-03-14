@@ -339,13 +339,26 @@ export default {
       this.getParamsData()
     },
     // 文本框失去焦点或 Enter
-    handleInputConfirm(row) {
+    async handleInputConfirm(row) {
       if (row.inputValue.trim().length === 0) {
         row.inputValue = ''
         row.inputVisible = false
         return false
       }
       // 用户输入了内容
+      row.attr_vals.push(row.inputValue.trim())
+      row.inputValue = ''
+      row.inputVisible = false
+      // 发情请求，保存这次操作
+      const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${row.attr_id}`, {
+        attr_name: row.attr_name,
+        attr_sel: row.attr_sel,
+        attr_vals: row.attr_vals.join(' ')
+      })
+      if (res.meta.status !== 200) {
+        return this.$message.error('添加参数项失败')
+      }
+      this.$message.success('添加参数成功')
     },
     // 点击按钮展示输入文本框
     showInput(row) {
