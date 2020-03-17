@@ -68,11 +68,27 @@
               <el-input v-model="item.attr_vals"></el-input>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
+          <el-tab-pane label="商品图片" name="3">
+            <!-- action: 后台要上传的地址 -->
+            <el-upload
+              :action="uploadURL"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
+              list-type="picture"
+              :headers="headerObj"
+              :on-success="handleSuccess"
+            >
+              <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+          </el-tab-pane>
           <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
         </el-tabs>
       </el-form>
     </el-card>
+    <!-- 图片预览 -->
+    <el-dialog title="图片预览" :visible.sync="previewVisible" width="50%">
+      <img :src="previewPath" alt="" class="previewImg">
+    </el-dialog>
   </div>
 </template>
 
@@ -90,7 +106,9 @@ export default {
         // 商品所属的分类数组
         goods_cat: [
           { required: true, message: '请选择商品分类', trigger: 'blur' }
-        ]
+        ],
+        // 图片的数组
+        pics: []
       },
       addFormRules: {
         goods_name: [
@@ -117,7 +135,14 @@ export default {
       // 动态参数数据
       manyTableData: [],
       // 静态属性数据
-      onlyTableData: []
+      onlyTableData: [],
+      uploadURL: 'http://127.0.0.1:8888/api/private/v1/upload',
+      // 图片上传组件的 headers 请求头
+      headerObj: {
+        Authorization: window.sessionStorage.getItem('token')
+      },
+      previewPath: '',
+      previewVisible: false
     }
   },
   created() {
@@ -151,29 +176,59 @@ export default {
       // console.log(this.activeIndex)
       if (this.activeIndex === '1') {
         // 动态参数
-        const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, {
-          params: {
-            sel: 'many'
+        const { data: res } = await this.$http.get(
+          `categories/${this.cateId}/attributes`,
+          {
+            params: {
+              sel: 'many'
+            }
           }
-        })
+        )
         if (res.meta.status !== 200) {
           return this.$message.error('获取动态参数列表失败')
         }
         res.data.forEach(item => {
-          item.attr_vals = item.attr_vals.length === 0 ? [] : item.attr_vals.split(' ')
+          item.attr_vals =
+            item.attr_vals.length === 0 ? [] : item.attr_vals.split(' ')
         })
         this.manyTableData = res.data
       } else if (this.activeIndex === '2') {
-        const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, {
-          params: {
-            sel: 'only'
+        const { data: res } = await this.$http.get(
+          `categories/${this.cateId}/attributes`,
+          {
+            params: {
+              sel: 'only'
+            }
           }
-        })
+        )
         if (res.meta.status !== 200) {
           return this.$message.error('获取静态属性失败')
         }
         this.onlyTableData = res.data
       }
+    },
+    // 图片预览
+    handlePreview(file) {
+      this.previewPath = file.response.data.url
+      this.previewVisible = true
+    },
+    // 图片删除
+    handleRemove(file) {
+      // 获取将要删除的图片的临时路径
+      const filePath = file.response.data.tmp_path
+      // 从 pics 数组中，找到这个图片对应的索引值
+      const i = this.addForm.pics.findIndex(x => x.pic === filePath)
+      // 调用数组的 splice 方法，把图片信息对象从 pics 数组中移出
+      this.addForm.pics.splice(i, 1)
+      console.log(this.addForm.pics)
+    },
+    // 图片上传成功
+    handleSuccess(response) {
+      // 拼接得到的图片信息对象
+      const picInfo = {
+        pic: response.data.tmp_path
+      }
+      this.addForm.pics.push(picInfo)
     }
   },
   computed: {
@@ -189,7 +244,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.el-checkbox{
-  margin: 0 10px 0 0!important;
+.el-checkbox {
+  margin: 0 10px 0 0 !important;
+}
+.previewImg{
+  width: 100%;
 }
 </style>
