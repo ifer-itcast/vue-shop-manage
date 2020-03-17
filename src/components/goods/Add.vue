@@ -27,7 +27,12 @@
         label-width="100px"
         label-position="top"
       >
-        <el-tabs :tab-position="tabPosition" v-model="activeIndex">
+        <el-tabs
+          :tab-position="tabPosition"
+          v-model="activeIndex"
+          :before-leave="beforeTabLeave"
+          @tab-click="tabClicked"
+        >
           <el-tab-pane label="基本信息" name="0">
             <el-form-item label="商品名称" prop="goods_name">
               <el-input v-model="addForm.goods_name"></el-input>
@@ -97,7 +102,8 @@ export default {
         value: 'cat_id',
         children: 'children',
         expandTrigger: 'hover'
-      }
+      },
+      manyTableData: []
     }
   },
   created() {
@@ -117,6 +123,40 @@ export default {
       if (this.addForm.goods_cat.length !== 3) {
         this.addForm.goods_cat = []
       }
+    },
+    beforeTabLeave(activeName, oldActiveName) {
+      // console.log('即将离开的标签页', oldActiveName)
+      // console.log('即将进入的标签页', activeName)
+      if (oldActiveName === '0' && this.addForm.goods_cat.length !== 3) {
+        this.$message.error('请选择商品分类')
+        return false
+      }
+    },
+    async tabClicked() {
+      // 当前激活的那个索引
+      // console.log(this.activeIndex)
+      if (this.activeIndex === '1') {
+        // 动态参数
+        const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, {
+          params: {
+            sel: 'many'
+          }
+        })
+        if (res.meta.status !== 200) {
+          return this.$message.error('获取动态参数列表失败')
+        }
+        console.log(res.data)
+        this.manyTableData = res.data
+      }
+    }
+  },
+  computed: {
+    cateId() {
+      // 三级分类的 ID
+      if (this.addForm.goods_cat.length === 3) {
+        return this.addForm.goods_cat[2]
+      }
+      return null
     }
   }
 }
