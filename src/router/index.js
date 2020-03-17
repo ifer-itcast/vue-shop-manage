@@ -10,6 +10,7 @@ import Cate from '../components/goods/Cate.vue'
 import Params from '../components/goods/Params.vue'
 import GoodsList from '../components/goods/List.vue'
 import Add from '../components/goods/Add.vue'
+import Order from '../components/order/Order.vue'
 
 Vue.use(VueRouter)
 
@@ -49,6 +50,9 @@ const routes = [{
     // 注意这种写法和直接把 /add 当做 /goods 的子路由是不一样的
     path: '/goods/add',
     component: Add
+  }, {
+    path: '/orders',
+    component: Order
   }]
 }]
 
