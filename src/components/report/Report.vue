@@ -8,7 +8,7 @@
     </el-breadcrumb>
     <!-- 卡片视图区域 -->
     <el-card>
-      <div id="main"></div>
+      <div id="main" style="width: 750px; height: 400px;"></div>
     </el-card>
   </div>
 </template>
@@ -53,7 +53,7 @@ export default {
   },
   created() {},
   async mounted() {
-    var myChart = echarts.init(document.querySelector('main'))
+    var myChart = echarts.init(document.querySelector('#main'))
     const { data: res } = await this.$http.get('reports/type/1')
     if (res.meta.status !== 200) {
       return this.$message.error('获取折线图数据失败')
