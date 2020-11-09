@@ -227,7 +227,7 @@ export default {
       const i = this.addForm.pics.findIndex(x => x.pic === filePath)
       // 调用数组的 splice 方法，把图片信息对象从 pics 数组中移出
       this.addForm.pics.splice(i, 1)
-      console.log(this.addForm.pics)
+      // console.log(this.addForm.pics)
     },
     // 图片上传成功
     handleSuccess(response) {
