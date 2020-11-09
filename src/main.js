@@ -15,6 +15,12 @@ axios.interceptors.request.use(config => {
   config.headers.Authorization = window.sessionStorage.getItem('token')
   return config
 })
+axios.interceptors.response.use(res => {
+  if (res.data.meta.msg === '无效token' && res.data.meta.status === 400) {
+    location.href = '/#/login'
+  }
+  return res
+})
 Vue.prototype.$http = axios
 
 Vue.config.productionTip = false
