@@ -73,13 +73,11 @@
           <!-- props: 用来指定配置对象 -->
           <!-- change-on-select: 允许选择一级分类 -->
           <el-cascader
-            expand-trigger="hover"
             :options="parentCateList"
             :props="cascaderProps"
             v-model="selectedKeys"
             @change="parentCateChanged"
             clearable
-            change-on-select
           ></el-cascader>
         </el-form-item>
       </el-form>
@@ -151,7 +149,9 @@ export default {
       cascaderProps: {
         value: 'cat_id',
         label: 'cat_name',
-        children: 'children'
+        children: 'children',
+        expandTrigger: 'hover',
+        checkStrictly: true
       },
       // 选中的父级分类的 ID 数组
       selectedKeys: []
