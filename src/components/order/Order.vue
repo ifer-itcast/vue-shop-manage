@@ -143,7 +143,7 @@ export default {
     },
     // 展示物流进度对话框
     async showProgressBox() {
-      const { data: res } = await this.$http.get('kuaidi/804909574412544580')
+      const { data: res } = await this.$http.get('kuaidi/DPK210206915703')
       if (res.meta.status !== 200) {
         return this.$message.error('获取物流信息失败')
       }
