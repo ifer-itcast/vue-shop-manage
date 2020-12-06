@@ -25,5 +25,8 @@ module.exports = {
         return args
       })
     })
+  },
+  css: {
+    extract: true
   }
 }
