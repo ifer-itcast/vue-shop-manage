@@ -73,6 +73,7 @@ export default {
     }
   },
   created() {
+    console.log(233)
     this.getMenuList()
     // 刷新的时候去 sessionStorage 里面去取
     this.activePath = window.sessionStorage.getItem('activePath')
