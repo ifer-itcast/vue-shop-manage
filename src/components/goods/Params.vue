@@ -278,7 +278,8 @@ export default {
           `categories/${this.cateId}/attributes/${this.editForm.attr_id}`,
           {
             attr_name: this.editForm.attr_name,
-            attr_sel: this.activeName
+            attr_sel: this.activeName,
+            attr_vals: this.editForm.attr_vals // !把之前的带上，防止把之前的清空
           }
         )
         if (res.meta.status !== 200) {
