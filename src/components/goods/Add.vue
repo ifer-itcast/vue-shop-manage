@@ -57,6 +57,7 @@
           </el-tab-pane>
           <el-tab-pane label="商品参数" name="1">
             <el-form-item :label="item.attr_name" v-for="item in manyTableData" :key="item.attr_id">
+              <!-- v-model 只需指定一个用来收集数据的空数据即可，不必是 item.attr_vals 这个数据数组 -->
               <el-checkbox-group v-model="item.attr_vals">
                 <!-- 这里最好区分出选中的和总的 -->
                 <el-checkbox border :label="cb" v-for="(cb, i) in item.attr_vals" :key="i"></el-checkbox>
